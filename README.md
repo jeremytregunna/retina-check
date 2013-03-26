@@ -10,6 +10,10 @@ For instance, let's assume you have an app which displays an image `foo.png`. Th
 
 Nothing will be displayed if the images are the expected size. Upon successful run, retina-check will return a zero exit status. If an error is encountered, retina-check will return a non-zero exit status.
 
+## Dependencies
+
+* Simple image processing system (sips binary)
+
 ## Installation
 
 Just throw it somewhere in your `$PATH` and make sure it's executable.
