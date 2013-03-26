@@ -1,0 +1,43 @@
+#!/bin/sh
+
+image_width() {
+	sips -g pixelWidth "$1" | tail -n1 | cut -d" " -f4
+}
+
+image_height() {
+	sips -g pixelHeight "$1" | tail -n1 | cut -d" " -f4
+}
+
+check_double() {
+	if [ -f "$1" ]; then
+		dirname=`dirname "$1"`
+		extension=`echo "$1" | awk -F . '{print $NF}'`
+		filename=`basename "$1" .$extension`
+		regular_width=`image_width "$1"`
+		regular_height=`image_height "$1"`
+		retina_image="$dirname/$filename@2x.$extension"
+		if [ -f "$retina_image" ]; then
+			retina_width=`image_width "$retina_image"`
+			retina_height=`image_height "$retina_image"`
+			height_diff=$((regular_height * 2 - retina_height))
+			if [ $height_diff != 0 ]; then
+				echo "$retina_image: Height is $retina_height, expected $((regular_height * 2)) (diff: $height_diff)"
+			fi
+			width_diff=$((regular_width * 2 - retina_width))
+			if [ $width_diff != 0 ]; then
+				echo "$retina_image: Width is $retina_width, expected $((regular_width * 2)) (diff: $width_diff)"
+			fi
+		fi
+	else
+		echo "no such file or directory: $1"
+		exit 1
+	fi
+}
+
+if [ -z "$1" ]; then
+	echo "Usage: $0 <image_filename>"
+	exit 1
+else
+	check_double "$1"
+	exit 0
+fi
